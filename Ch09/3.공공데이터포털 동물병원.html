@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3.공공데이터포털 동물병원</title>
+    <!--
+        날짜 : 2023/08/02
+        이름 : 노수현
+        내용 : 공공데이터포털 API 실습하기
+    -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
+    <script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=5495b4682ea11a080cc132b6788aca8f"></script>
+    <script>
+
+            window.onload = function(){
+
+            var mapContainer = document.getElementById('map3'), // 지도를 표시할 div 
+                mapOption = { 
+                center: new kakao.maps.LatLng(35.137123421428136, 129.09889602046647), // 지도의 중심좌표
+                level: 10 // 지도의 확대 레벨
+            };
+    
+            // 지도를 표시할 div와  지도 옵션으로  지도를 생성합니다
+            var map = new kakao.maps.Map(mapContainer, mapOption); 
+
+            const url = "https://apis.data.go.kr/6260000/BusanAnimalHospService/getTblAnimalHospital?serviceKey=gtLDTxP5qR%2BeKURwDarYPWNr7k1f93JVUaQ8D7WLu9QhwYBubQmYymexuw2xp1KF9FsOpnlcyMHq2Q9UaKY%2FRg%3D%3D&pageNo=1&numOfRows=300&resultType=json";
+            
+            fetch(url)
+                .then((res)=>res.json())
+                .then((data) => {
+                    console.log(data.getTblAnimalHospital.body.items.item);
+                    const items = data.getTblAnimalHospital.body.items.item;
+                    
+                    for (let item of items) {
+                console.log(item.animal_hospital);
+
+                createMarker(item);
+                   
+            }
+        });
+
+    function createMarker(item) {
+        
+        var marker = new kakao.maps.Marker({
+            map: map,
+            position: new kakao.maps.LatLng(item.lat, item.lon)
+        });
+
+        var infowindow = new kakao.maps.InfoWindow({
+            content: item.animal_hospital,
+            removable: true
+        });
+
+        kakao.maps.event.addListener(marker, 'click', function() {
+            infowindow.open(map, marker);
+        });
+    }
+}
+
+    </script>
+</head>
+<body>
+    <h3>3.공공데이터 활용 실습</h3>
+
+    <h4>부산 동물병원 위치</h4>
+    <div id="map3" style="width:1200px;height:800px;"></div>
+    
+
+</body>
+</html>
